@@ -9,16 +9,7 @@
         <form class="well">
             <div class="row">
                 <div class="span2">
-                    <label>Period:</label>
-                    <select class="span2">
-                        <option>Today</option>
-                        <option>Tomorrow</option>
-                        <option>Yesterday</option>
-                        <option>This Month</option>
-                        <option>Last Month</option>
-                        <option>Next Month</option>
-                    </select>
-                    <br />
+                    {{form.period|bootstrap}}
                     {{form.doc|bootstrap}}
                 </div>
                 <div class="span2">

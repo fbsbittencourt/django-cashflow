@@ -1,11 +1,15 @@
 from django import forms
 from money import models
+from money import utils
+from money import settings
+import datetime
 
 YESNO = (
     ('', ''),
     ('Y', 'Yes'),
     ('N', 'No'),
 )
+
 
 # Inputs
 class DatepickerInput(forms.widgets.DateInput):
@@ -49,6 +53,7 @@ class EntryFilterForm(forms.Form):
         self.fields['person'].choices = [('','')] + [(obj.id, str(obj)) for obj in models.Person.objects.all()]
         self.fields['account'].choices = [('','')] + [(obj.id, str(obj)) for obj in models.Account.objects.all()]
 
+    period = forms.ChoiceField(choices=utils.date_shortcuts(), widget=forms.widgets.Select(attrs={'class':'span2'}))
     start_date = forms.CharField(max_length=20, widget=forms.widgets.TextInput(attrs={'class':'span2 datepicker'}))
     end_date = forms.CharField(max_length=20, widget=forms.widgets.TextInput(attrs={'class':'span2 datepicker'}))
     bank = forms.ChoiceField(widget=forms.widgets.Select(attrs={'class':'span2'}))

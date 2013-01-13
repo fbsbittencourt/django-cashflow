@@ -46,12 +46,17 @@ class EntryList(generic.RestrictedListView, FormMixin):
 
     def get_queryset(self):
         queryset = Entry.objects.filter(pay_date__range=(self.start_date, self.end_date))
+
+        if self.request.GET.get('bank', None):
+            queryset = queryset.filter(bank=self.request.GET.get('bank'))
+
         return queryset
 
     def get_initial(self):
         initial = super(EntryList, self).get_initial()
         initial['start_date'] = datetime.strftime(self.start_date, settings.DATE_FORMAT)
         initial['end_date'] = datetime.strftime(self.end_date, settings.DATE_FORMAT)
+        initial['bank'] = self.request.GET.get('bank', None)
         return initial
 
     def get_context_data(self, **kwargs):

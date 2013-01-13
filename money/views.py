@@ -34,13 +34,13 @@ class EntryList(generic.RestrictedListView, FormMixin):
     form_class=forms.EntryFilterForm
 
     def get(self, request, *args, **kwargs):
-        today = datetime.today().date()
+        self.today = datetime.today().date()
         if request.GET:
             self.start_date = datetime.strptime(request.GET.get('start_date'), settings.DATE_FORMAT)
             self.end_date = datetime.strptime(request.GET.get('end_date'), settings.DATE_FORMAT)
         else:
-            self.start_date = today.replace(day=1)
-            self.end_date = last_day_of_this_month(today)
+            self.start_date = self.today.replace(day=1)
+            self.end_date = last_day_of_this_month(self.today)
 
         return super(EntryList, self).get(request, *args, **kwargs)
 
@@ -50,6 +50,24 @@ class EntryList(generic.RestrictedListView, FormMixin):
         if self.request.GET.get('bank', None):
             queryset = queryset.filter(bank=self.request.GET.get('bank'))
 
+        if self.request.GET.get('person', None):
+            queryset = queryset.filter(person=self.request.GET.get('person'))
+
+        if self.request.GET.get('account', None):
+            queryset = queryset.filter(account=self.request.GET.get('account'))
+
+        if self.request.GET.get('doc', None):
+            queryset = queryset.filter(doc=self.request.GET.get('doc'))
+
+        if self.request.GET.get('check', None):
+            queryset = queryset.filter(check=self.request.GET.get('check'))
+
+        if self.request.GET.get('due', None):
+            if self.request.GET.get('due') == 'Y':
+                queryset = queryset.filter(pay_date__lt=self.today, status=0)
+            elif self.request.GET.get('due') == 'N':
+                queryset = queryset.filter(pay_date__gte=self.today, status=0)
+
         return queryset
 
     def get_initial(self):
@@ -57,6 +75,11 @@ class EntryList(generic.RestrictedListView, FormMixin):
         initial['start_date'] = datetime.strftime(self.start_date, settings.DATE_FORMAT)
         initial['end_date'] = datetime.strftime(self.end_date, settings.DATE_FORMAT)
         initial['bank'] = self.request.GET.get('bank', None)
+        initial['person'] = self.request.GET.get('person', None)
+        initial['account'] = self.request.GET.get('account', None)
+        initial['doc'] = self.request.GET.get('doc', None)
+        initial['check'] = self.request.GET.get('check', None)
+        initial['due'] = self.request.GET.get('due', None)
         return initial
 
     def get_context_data(self, **kwargs):

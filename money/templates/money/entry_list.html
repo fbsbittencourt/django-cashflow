@@ -1,13 +1,44 @@
 {% extends 'cashflow.html' %}
+{% load bootstrap %}
 {% load url from future %}
 
 {% block content %}
 <div class="panel">
     <span class="name">Entries</span>
     <div class="content">
-        <form class="well form-inline">
-            {{form}}
-            <button class="btn"><i class="icon-search"></i> Filter</button>
+        <form class="well">
+            <div class="row">
+                <div class="span2">
+                    <label>Period:</label>
+                    <select class="span2">
+                        <option>Today</option>
+                        <option>Tomorrow</option>
+                        <option>Yesterday</option>
+                        <option>This Month</option>
+                        <option>Last Month</option>
+                        <option>Next Month</option>
+                    </select>
+                    <br />
+                    {{form.doc|bootstrap}}
+                </div>
+                <div class="span2">
+                    {{form.end_date|bootstrap}}
+                    {{form.check|bootstrap}}
+                </div>
+                <div class="span2">
+                    {{form.start_date|bootstrap}}
+                    {{form.due|bootstrap}}
+                </div>
+                <div class="span2">
+                    {{form.bank|bootstrap}}
+                </div>
+                <div class="span2">
+                    {{form.account|bootstrap}}
+                    <button class="btn"><i class="icon-search"></i> Filter</button>
+                </div>
+
+
+            </div>
         </form>
         <div class="pull-right"><a href="{% url 'entry_create' %}" class="btn btn-success"><i class="icon-plus icon-white"></i> New Entry</a></div>
         <table class="table table-striped table-hover">

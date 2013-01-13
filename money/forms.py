@@ -1,6 +1,12 @@
 from django import forms
 from money import models
 
+YESNO = (
+    ('', ''),
+    ('Y', 'Yes'),
+    ('N', 'No'),
+)
+
 # Inputs
 class DatepickerInput(forms.widgets.DateInput):
 
@@ -40,7 +46,14 @@ class EntryFilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(EntryFilterForm, self).__init__(*args, **kwargs)
         self.fields['bank'].choices = [('','')] + [(obj.id, str(obj)) for obj in models.Bank.objects.all()]
+        self.fields['person'].choices = [('','')] + [(obj.id, str(obj)) for obj in models.Person.objects.all()]
+        self.fields['account'].choices = [('','')] + [(obj.id, str(obj)) for obj in models.Account.objects.all()]
 
     start_date = forms.CharField(max_length=20, widget=forms.widgets.TextInput(attrs={'class':'span2 datepicker'}))
     end_date = forms.CharField(max_length=20, widget=forms.widgets.TextInput(attrs={'class':'span2 datepicker'}))
     bank = forms.ChoiceField(widget=forms.widgets.Select(attrs={'class':'span2'}))
+    person = forms.ChoiceField(widget=forms.widgets.Select(attrs={'class':'span2'}))
+    account = forms.ChoiceField(widget=forms.widgets.Select(attrs={'class':'span2'}))
+    doc = forms.CharField(max_length=20, widget=forms.widgets.TextInput(attrs={'class':'span2'}))
+    check = forms.CharField(max_length=20, widget=forms.widgets.TextInput(attrs={'class':'span2'}))
+    due = forms.ChoiceField(choices=YESNO, widget=forms.widgets.Select(attrs={'class':'span2'}))

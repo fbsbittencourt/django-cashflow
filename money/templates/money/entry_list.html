@@ -18,7 +18,7 @@
                 </div>
                 <div class="span2">
                     {{form.start_date|bootstrap}}
-                    {{form.due|bootstrap}}
+                    {{form.discharge|bootstrap}}
                 </div>
                 <div class="span2">
                     {{form.bank|bootstrap}}
@@ -31,18 +31,18 @@
 
             </div>
         </form>
-        <div class="pull-right"><a href="{% url 'entry_create' %}" class="btn btn-success"><i class="icon-plus icon-white"></i> New Entry</a></div>
-        <table class="table table-striped table-hover">
+        <div class="pull-right"><a href="{% url 'entry_create' %}" class="btn btn-primary"><i class="icon-plus icon-white"></i> New Entry</a></div>
+        <br /><br />
+        <table class="table table-bordered table-striped table-hover">
             <thead>
                 <tr>
-                    <th>Date</th>
+                    <th>Pay date</th>
                     <th>Account</th>
                     <th>Description</th>
                     <th>Person</th>
                     <th>Bank</th>
+                    <th>Discharge</th>
                     <th>Amount</th>
-                    <th></th>
-                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -53,19 +53,47 @@
             {% else %}
                 {% for entry in object_list %}
                 <tr>
-                    <td>{{entry.created}}</td>
-                    <td>{{entry.account.name}}</td>
+                    <td width="100">{{entry.pay_date}}</td>
+                    <td><a href="{% url 'entry_list' %}?account={{entry.account.pk}}">{{entry.account.name}}</a></td>
                     <td>{{entry.name}}</td>
-                    <td>{{entry.person.name}}</td>
-                    <td>{{entry.bank.name}}</td>
-                    <td>{{entry.amount}}</td>
-                    <td></td>
-                    <td><a href="#"></a></td>
+                    <td><a href="{% url 'entry_list' %}?person={{entry.person.pk}}">{{entry.person.name}}</a></td>
+                    <td><a href="{% url 'entry_list' %}?bank={{entry.bank.pk}}">{{entry.bank.name}}</a></td>
+                    <td><a class="btn btn-success" title="check as paid" href="#"><i class="icon-ok icon-white"></i></a></td>
+                    <td><span class="pull-right">{{entry.amount}}</span></td>
                 </tr>
                 {% endfor %}
             {% endif %}
             </tbody>
         </table>
+        <div class="row">
+            <div class="span4 pull-right">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Sumarry</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>Credit:</th>
+                            <td><span class="pull-right">Value</span></td>
+                        <tr>
+                        <tr>
+                            <th>Debit:</th>
+                            <td><span class="pull-right">Value</span></td>
+                        <tr>
+                        <tr>
+                            <th>Provided Balance:</th>
+                            <td><span class="pull-right">Value</span></td>
+                        <tr>
+                        <tr>
+                            <th>Realized Balance:</th>
+                            <td><span class="pull-right">Value</span></td>
+                        <tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

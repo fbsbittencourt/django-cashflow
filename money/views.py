@@ -35,7 +35,7 @@ class EntryList(generic.RestrictedListView, FormMixin):
 
     def get(self, request, *args, **kwargs):
         self.today = datetime.today().date()
-        if request.GET:
+        if request.GET.get('start_date') and request.GET.get('end_date'):
             self.start_date = datetime.strptime(request.GET.get('start_date'), settings.DATE_FORMAT)
             self.end_date = datetime.strptime(request.GET.get('end_date'), settings.DATE_FORMAT)
         else:
@@ -62,10 +62,10 @@ class EntryList(generic.RestrictedListView, FormMixin):
         if self.request.GET.get('check', None):
             queryset = queryset.filter(check=self.request.GET.get('check'))
 
-        if self.request.GET.get('due', None):
-            if self.request.GET.get('due') == 'Y':
+        if self.request.GET.get('discharge', None):
+            if self.request.GET.get('discharge') == 'Y':
                 queryset = queryset.filter(pay_date__lt=self.today, status=0)
-            elif self.request.GET.get('due') == 'N':
+            elif self.request.GET.get('discharge') == 'N':
                 queryset = queryset.filter(pay_date__gte=self.today, status=0)
 
         return queryset
@@ -79,7 +79,7 @@ class EntryList(generic.RestrictedListView, FormMixin):
         initial['account'] = self.request.GET.get('account', None)
         initial['doc'] = self.request.GET.get('doc', None)
         initial['check'] = self.request.GET.get('check', None)
-        initial['due'] = self.request.GET.get('due', None)
+        initial['discharge'] = self.request.GET.get('discharge', None)
         return initial
 
     def get_context_data(self, **kwargs):

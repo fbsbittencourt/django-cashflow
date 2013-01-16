@@ -61,4 +61,4 @@ class EntryFilterForm(forms.Form):
     account = forms.ChoiceField(widget=forms.widgets.Select(attrs={'class':'span2'}))
     doc = forms.CharField(max_length=20, widget=forms.widgets.TextInput(attrs={'class':'span2'}))
     check = forms.CharField(max_length=20, widget=forms.widgets.TextInput(attrs={'class':'span2'}))
-    due = forms.ChoiceField(choices=YESNO, widget=forms.widgets.Select(attrs={'class':'span2'}))
+    discharge = forms.ChoiceField(choices=YESNO, widget=forms.widgets.Select(attrs={'class':'span2'}))

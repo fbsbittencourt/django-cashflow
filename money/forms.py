@@ -31,6 +31,7 @@ class EntryForm(forms.ModelForm):
         }
 
 class BankForm(forms.ModelForm):
+    initial_balance = forms.FloatField()
     class Meta:
         exclude = ('user',)
         model = models.Bank

@@ -54,3 +54,11 @@ class Entry(IdentModel):
 
     def __unicode__(self):
         return self.name
+
+class Balance(models.Model):
+    bank = models.ForeignKey(Bank)
+    date = models.DateField()
+    amount = models.FloatField()
+
+    def __unicode__(self):
+        return '%s at %s have %.2f' % (self.bank.name, self.date, self.amount)

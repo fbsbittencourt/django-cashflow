@@ -1,9 +1,10 @@
 from django.views.generic import TemplateView
 from django.views.generic.edit import FormMixin
 from django.core.urlresolvers import reverse_lazy
+from django.http import HttpResponseRedirect
 from money import generic
 from money import settings
-from money.models import Entry, Bank, Account, Person
+from money.models import Entry, Bank, Account, Person, Balance
 from money import forms
 from money.utils import last_day_of_this_month
 from datetime import datetime
@@ -96,6 +97,23 @@ class BankList(generic.ModelFormWithListView):
     model=Bank
     form_class=forms.BankForm
     success_url = reverse_lazy('bank_list')
+
+    def form_valid(self, form):
+
+        self.object = form.save(commit=False)
+        self.object.user = self.request.user
+        self.object.save()
+
+        Balance(
+            bank=self.object,
+            amount=self.request.POST.get('initial_balance', 0),
+            date=self.get_date_balance()
+        ).save()
+
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_date_balance(self):
+        return datetime.today().date().replace(day=1)
 
 class BankDelete(generic.RestrictedDeleteView):
     model=Bank

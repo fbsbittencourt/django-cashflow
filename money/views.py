@@ -88,10 +88,45 @@ class EntryList(generic.RestrictedListView, FormMixin):
         context['form'] = self.get_form(self.get_form_class())
         return context
 
-class EntryCreate(generic.RestrictedCreateView):
+class BalanceManager(object):
+
+    def get_latest_balance(self, date, bank):
+        balance_date = date.replace(day=1)
+        try:
+            balance = Balance.objects.get(date=balance_date, bank=bank)
+        except Balance.DoesNotExist:
+            balance = Balance.objects.filter(bank=bank).latest('date')
+            new_balance = Balance(date=balance_date, bank=bank, amount=balance.amount)
+            new_balance.save()
+            return new_balance
+        else:
+            return balance
+
+    def set_balance(self, entry):
+
+        if entry.status == True:
+            balance = self.get_latest_balance(entry.paid_date, entry.bank)
+
+            if entry.account.type == 'C':
+                balance.amount += entry.amount
+            else:
+                balance.amount -= entry.amount
+
+            balance.save()
+
+class EntryCreate(generic.RestrictedCreateView, BalanceManager):
     model=Entry
     form_class=forms.EntryForm
     success_url = reverse_lazy('entry_list')
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.user = self.request.user
+        self.object.save()
+
+        self.set_balance(self.object)
+
+        return HttpResponseRedirect(self.get_success_url())
 
 class BankList(generic.ModelFormWithListView):
     model=Bank

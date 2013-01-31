@@ -50,7 +50,7 @@ class Entry(IdentModel):
     paid_date = models.DateField(blank=True, null=True)
     doc = models.CharField(max_length=20, blank=True, null=True)
     check = models.CharField(max_length=20, blank=True, null=True)
-    status = models.CharField(max_length=1, default=0)
+    status = models.BooleanField()
 
     def __unicode__(self):
         return self.name

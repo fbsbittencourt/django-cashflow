@@ -114,6 +114,14 @@ class BalanceManager(object):
 
             balance.save()
 
+    def set_initial_balance(self, bank, value=0):
+        date = datetime.today().date().replace(day=1)
+        Balance(
+            bank=bank,
+            amount=value,
+            date=date
+        ).save()
+
 class EntryCreate(generic.RestrictedCreateView, BalanceManager):
     model=Entry
     form_class=forms.EntryForm
@@ -128,7 +136,7 @@ class EntryCreate(generic.RestrictedCreateView, BalanceManager):
 
         return HttpResponseRedirect(self.get_success_url())
 
-class BankList(generic.ModelFormWithListView):
+class BankList(generic.ModelFormWithListView, BalanceManager):
     model=Bank
     form_class=forms.BankForm
     success_url = reverse_lazy('bank_list')
@@ -139,16 +147,10 @@ class BankList(generic.ModelFormWithListView):
         self.object.user = self.request.user
         self.object.save()
 
-        Balance(
-            bank=self.object,
-            amount=self.request.POST.get('initial_balance', 0),
-            date=self.get_date_balance()
-        ).save()
+        self.set_initial_balance(self.object, self.request.POST.get('initial_balance',0))
 
         return HttpResponseRedirect(self.get_success_url())
 
-    def get_date_balance(self):
-        return datetime.today().date().replace(day=1)
 
 class BankDelete(generic.RestrictedDeleteView):
     model=Bank

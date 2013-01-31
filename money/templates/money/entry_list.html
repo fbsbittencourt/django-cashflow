@@ -2,6 +2,25 @@
 {% load bootstrap %}
 {% load url from future %}
 
+{% block extra_js %}
+<script>
+(function($){
+    $(function(){
+        var $entry_discharge_modal = $('#EntryDischargeModal'),
+            $discharge_form = $('#EntryDischargeForm'),
+            $discharge_buttom = $('.discharge'),
+            update_entry_url = '/entry/discharge/'
+
+            $discharge_buttom.on('click', function(){
+                $entry_discharge_modal.modal('toggle')
+                    $discharge_form.attr('action', update_entry_url + $(this).parent().find('input').val())
+            })
+
+    })
+})(jQuery)
+</script>
+{% endblock %}
+
 {% block content %}
 <div class="panel">
     <span class="name">Entries</span>
@@ -27,8 +46,6 @@
                     {{form.account|bootstrap}}
                     <button class="btn"><i class="icon-search"></i> Filter</button>
                 </div>
-
-
             </div>
         </form>
         <div class="pull-right"><a href="{% url 'entry_create' %}" class="btn btn-primary"><i class="icon-plus icon-white"></i> New Entry</a></div>
@@ -58,7 +75,10 @@
                     <td>{{entry.name}}</td>
                     <td><a href="{% url 'entry_list' %}?person={{entry.person.pk}}">{{entry.person.name}}</a></td>
                     <td><a href="{% url 'entry_list' %}?bank={{entry.bank.pk}}">{{entry.bank.name}}</a></td>
-                    <td><a class="btn btn-success" title="check as paid" href="#"><i class="icon-ok icon-white"></i></a></td>
+                    <td>
+                        <a class="btn btn-success discharge" title="check as paid" href="#"><i class="icon-ok icon-white"></i></a>
+                        <input type="hidden" value="{{entry.id}}" />
+                    </td>
                     <td><span class="pull-right">{{entry.amount}}</span></td>
                 </tr>
                 {% endfor %}
@@ -95,5 +115,25 @@
             </div>
         </div>
     </div>
+</div>
+
+<div id="EntryDischargeModal" class="modal hide fade">
+
+    <form id="EntryDischargeForm" method="post" action="#">{% csrf_token %}
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3>Closes entry informations</h3>
+        </div>
+
+        <div class="modal-body">
+                {{entry_discharge_form}}
+        </div>
+
+        <div class="modal-footer">
+            <a href="#" class="btn" data-dismiss="modal">Close</a>
+            <button class="btn btn-primary">Save</button>
+        </div>
+    </form>
+
 </div>
 {% endblock %}

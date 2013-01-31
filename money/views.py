@@ -86,6 +86,7 @@ class EntryList(generic.RestrictedListView, FormMixin):
     def get_context_data(self, **kwargs):
         context = super(EntryList, self).get_context_data(**kwargs)
         context['form'] = self.get_form(self.get_form_class())
+        context['entry_discharge_form'] = forms.EntryDischargeForm()
         return context
 
 class BalanceManager(object):
@@ -130,6 +131,23 @@ class EntryCreate(generic.RestrictedCreateView, BalanceManager):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.user = self.request.user
+        self.object.save()
+
+        self.set_balance(self.object)
+
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class EntryDischarge(generic.RestrictedUpdateView, BalanceManager):
+    model=Entry
+    form_class=forms.EntryDischargeForm
+    success_url= reverse_lazy('entry_list')
+
+    def form_valid(self, form):
+        # TODO: Allow Redo discharge and balance
+        self.object = form.save(commit=False)
+        self.object.user = self.request.user
+        self.object.status = True
         self.object.save()
 
         self.set_balance(self.object)

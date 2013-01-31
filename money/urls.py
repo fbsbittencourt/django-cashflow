@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     url (r'^dashboard$',views_money.DashBoard.as_view(), name='dashboard'),
     url(r'^entries$', views_money.EntryList.as_view(), name='entry_list'),
     url(r'^entries/create$', views_money.EntryCreate.as_view(), name='entry_create'),
+    url(r'^entry/discharge/(?P<pk>\d+)$', views_money.EntryDischarge.as_view(),  name='entry_discharge'),
 
     url(r'^banks/$', views_money.BankList.as_view(), name='bank_list'),
     url(r'^banks/edit/(?P<pk>\d+)$', views_money.BankList.as_view(), name='bank_edit'),

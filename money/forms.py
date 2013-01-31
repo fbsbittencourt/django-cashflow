@@ -30,6 +30,14 @@ class EntryForm(forms.ModelForm):
             'paid_date' : DatepickerInput(),
         }
 
+class EntryDischargeForm(forms.ModelForm):
+    class Meta:
+        fields = ('paid_date', 'doc', 'check')
+        model = models.Entry
+        widgets={
+            'paid_date' : DatepickerInput(),
+        }
+
 class BankForm(forms.ModelForm):
     initial_balance = forms.FloatField()
     class Meta:

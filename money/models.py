@@ -43,7 +43,7 @@ class Person(IdentModel):
 class Entry(IdentModel):
     account = models.ForeignKey(Account)
     bank = models.ForeignKey(Bank)
-    person = models.ForeignKey(Person)
+    person = models.ForeignKey(Person, blank=True, null=True)
     name = models.CharField(max_length=100)
     amount = models.FloatField()
     pay_date = models.DateField()

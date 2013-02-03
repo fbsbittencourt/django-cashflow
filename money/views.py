@@ -1,7 +1,9 @@
 from django.views.generic import TemplateView
 from django.views.generic.edit import FormMixin
 from django.core.urlresolvers import reverse_lazy
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponse
+from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 from money import generic
 from money import settings
 from money.models import Entry, Bank, Account, Person, Balance
@@ -115,6 +117,14 @@ class BalanceManager(object):
 
             balance.save()
 
+    def reverse_balance(self, entry):
+        balance = self.get_latest_balance(entry.pay_date, entry.bank)
+        if entry.account.type == 'C':
+            balance.amount -= entry.amount
+        else:
+            balance.amount += entry.amount
+        balance.save()
+
     def set_initial_balance(self, bank, value=0):
         date = datetime.today().date().replace(day=1)
         Balance(
@@ -137,6 +147,36 @@ class EntryCreate(generic.RestrictedCreateView, BalanceManager):
 
         return HttpResponseRedirect(self.get_success_url())
 
+class EntryDischargeReverse(generic.RestrictedUpdateView, BalanceManager):
+    model=Entry
+    success_url= reverse_lazy('entry_list')
+
+    def post(self, request, *args, **kwargs):
+
+        try:
+
+            self.object = self.get_object()
+
+            if request.POST.get('action', False) == 'reverse':
+                self.object.status = False
+                self.object.paid_date = None
+                self.object.check = None
+                self.object.doc = None
+                self.object.save()
+
+                self.reverse_balance(self.object)
+
+            return HttpResponse([], content_type='application/json')
+        except Exception as e:
+            print str(e)
+
+    def get_object(self):
+        return get_object_or_404(Entry, pk=self.request.POST.get('entry', None))
+
+    @csrf_exempt
+    def dispatch(self, *args, **kwargs):
+        return super(EntryDischargeReverse, self).dispatch(*args, **kwargs)
+
 
 class EntryDischarge(generic.RestrictedUpdateView, BalanceManager):
     model=Entry
@@ -144,7 +184,6 @@ class EntryDischarge(generic.RestrictedUpdateView, BalanceManager):
     success_url= reverse_lazy('entry_list')
 
     def form_valid(self, form):
-        # TODO: Allow Redo discharge and balance
         self.object = form.save(commit=False)
         self.object.user = self.request.user
         self.object.status = True

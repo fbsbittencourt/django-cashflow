@@ -14,6 +14,7 @@ urlpatterns = patterns('',
     url(r'^entries$', views_money.EntryList.as_view(), name='entry_list'),
     url(r'^entries/create$', views_money.EntryCreate.as_view(), name='entry_create'),
     url(r'^entry/discharge/(?P<pk>\d+)$', views_money.EntryDischarge.as_view(),  name='entry_discharge'),
+    url(r'^entry/discharge/reverse$', views_money.EntryDischargeReverse.as_view(),  name='entry_discharge_reverse'),
 
     url(r'^banks/$', views_money.BankList.as_view(), name='bank_list'),
     url(r'^banks/edit/(?P<pk>\d+)$', views_money.BankList.as_view(), name='bank_edit'),

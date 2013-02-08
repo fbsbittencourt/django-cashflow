@@ -43,14 +43,22 @@ class Person(IdentModel):
 class Entry(IdentModel):
     account = models.ForeignKey(Account)
     bank = models.ForeignKey(Bank)
-    person = models.ForeignKey(Person)
+    person = models.ForeignKey(Person, blank=True, null=True)
     name = models.CharField(max_length=100)
     amount = models.FloatField()
     pay_date = models.DateField()
     paid_date = models.DateField(blank=True, null=True)
     doc = models.CharField(max_length=20, blank=True, null=True)
     check = models.CharField(max_length=20, blank=True, null=True)
-    status = models.CharField(max_length=1, default=0)
+    status = models.BooleanField()
 
     def __unicode__(self):
         return self.name
+
+class Balance(models.Model):
+    bank = models.ForeignKey(Bank)
+    date = models.DateField()
+    amount = models.FloatField()
+
+    def __unicode__(self):
+        return '%s at %s have %.2f' % (self.bank.name, self.date, self.amount)

@@ -1,9 +1,12 @@
 from django.views.generic import TemplateView
 from django.views.generic.edit import FormMixin
 from django.core.urlresolvers import reverse_lazy
+from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponse
+from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 from money import generic
 from money import settings
-from money.models import Entry, Bank, Account, Person
+from money.models import Entry, Bank, Account, Person, Balance
 from money import forms
 from money.utils import last_day_of_this_month
 from datetime import datetime
@@ -85,17 +88,126 @@ class EntryList(generic.RestrictedListView, FormMixin):
     def get_context_data(self, **kwargs):
         context = super(EntryList, self).get_context_data(**kwargs)
         context['form'] = self.get_form(self.get_form_class())
+        context['entry_discharge_form'] = forms.EntryDischargeForm()
         return context
 
-class EntryCreate(generic.RestrictedCreateView):
+class BalanceManager(object):
+
+    def get_latest_balance(self, date, bank):
+        balance_date = date.replace(day=1)
+        try:
+            balance = Balance.objects.get(date=balance_date, bank=bank)
+        except Balance.DoesNotExist:
+            balance = Balance.objects.filter(bank=bank).latest('date')
+            new_balance = Balance(date=balance_date, bank=bank, amount=balance.amount)
+            new_balance.save()
+            return new_balance
+        else:
+            return balance
+
+    def set_balance(self, entry):
+
+        if entry.status == True:
+            balance = self.get_latest_balance(entry.paid_date, entry.bank)
+
+            if entry.account.type == 'C':
+                balance.amount += entry.amount
+            else:
+                balance.amount -= entry.amount
+
+            balance.save()
+
+    def reverse_balance(self, entry):
+        balance = self.get_latest_balance(entry.pay_date, entry.bank)
+        if entry.account.type == 'C':
+            balance.amount -= entry.amount
+        else:
+            balance.amount += entry.amount
+        balance.save()
+
+    def set_initial_balance(self, bank, value=0):
+        date = datetime.today().date().replace(day=1)
+        Balance(
+            bank=bank,
+            amount=value,
+            date=date
+        ).save()
+
+class EntryCreate(generic.RestrictedCreateView, BalanceManager):
     model=Entry
     form_class=forms.EntryForm
     success_url = reverse_lazy('entry_list')
 
-class BankList(generic.ModelFormWithListView):
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.user = self.request.user
+        self.object.save()
+
+        self.set_balance(self.object)
+
+        return HttpResponseRedirect(self.get_success_url())
+
+class EntryDischargeReverse(generic.RestrictedUpdateView, BalanceManager):
+    model=Entry
+    success_url= reverse_lazy('entry_list')
+
+    def post(self, request, *args, **kwargs):
+
+        try:
+
+            self.object = self.get_object()
+
+            if request.POST.get('action', False) == 'reverse':
+                self.object.status = False
+                self.object.paid_date = None
+                self.object.check = None
+                self.object.doc = None
+                self.object.save()
+
+                self.reverse_balance(self.object)
+
+            return HttpResponse([], content_type='application/json')
+        except Exception as e:
+            print str(e)
+
+    def get_object(self):
+        return get_object_or_404(Entry, pk=self.request.POST.get('entry', None))
+
+    @csrf_exempt
+    def dispatch(self, *args, **kwargs):
+        return super(EntryDischargeReverse, self).dispatch(*args, **kwargs)
+
+
+class EntryDischarge(generic.RestrictedUpdateView, BalanceManager):
+    model=Entry
+    form_class=forms.EntryDischargeForm
+    success_url= reverse_lazy('entry_list')
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.user = self.request.user
+        self.object.status = True
+        self.object.save()
+
+        self.set_balance(self.object)
+
+        return HttpResponseRedirect(self.get_success_url())
+
+class BankList(generic.ModelFormWithListView, BalanceManager):
     model=Bank
     form_class=forms.BankForm
     success_url = reverse_lazy('bank_list')
+
+    def form_valid(self, form):
+
+        self.object = form.save(commit=False)
+        self.object.user = self.request.user
+        self.object.save()
+
+        self.set_initial_balance(self.object, self.request.POST.get('initial_balance',0))
+
+        return HttpResponseRedirect(self.get_success_url())
+
 
 class BankDelete(generic.RestrictedDeleteView):
     model=Bank

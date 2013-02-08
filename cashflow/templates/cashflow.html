@@ -1,4 +1,7 @@
 {% load url from future %}
+
+{% load i18n %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,14 +32,14 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </a>
-                <a class="brand" href="#">CashFlow</a>
+                <a class="brand" href="#">{% trans "CashFlow" %}</a>
                 <div class="nav-collapse collapse">
                     <ul class="nav">
-                        <li class="active"><a href="{% url 'dashboard' %}">Dashboard</a></li>
-                        <li><a href="{% url 'entry_list' %}">Entries</a></li>
-                        <li><a href="{% url 'bank_list' %}">Banks</a></li>
-                        <li><a href="{% url 'account_list' %}">Accounts</a></li>
-                        <li><a href="{% url 'person_list' %}">People</a></li>
+                        <li class="active"><a href="{% url 'dashboard' %}">{% trans "Dashboard" %}</a></li>
+                        <li><a href="{% url 'entry_list' %}">{% trans "Entries" %}</a></li>
+                        <li><a href="{% url 'bank_list' %}">{% trans "Banks" %}</a></li>
+                        <li><a href="{% url 'account_list' %}">{% trans "Accounts" %}</a></li>
+                        <li><a href="{% url 'person_list' %}">{% trans "People" %}</a></li>
                     </ul>
                 </div><!--/.nav-collapse -->
             </div>

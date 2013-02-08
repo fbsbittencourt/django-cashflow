@@ -1,6 +1,7 @@
 {% extends 'cashflow.html' %}
 {% load bootstrap %}
 {% load url from future %}
+{% load i18n %}
 
 {% block extra_js %}
 <script>
@@ -36,7 +37,7 @@
 
 {% block content %}
 <div class="panel">
-    <span class="name">Entries</span>
+    <span class="name">{% trans "Entries" %}</span>
     <div class="content">
         <form class="well">
             <div class="row">
@@ -57,28 +58,28 @@
                 </div>
                 <div class="span2">
                     {{form.account|bootstrap}}
-                    <button class="btn"><i class="icon-search"></i> Filter</button>
+                    <button class="btn"><i class="icon-search"></i> {% trans "Filter" %}</button>
                 </div>
             </div>
         </form>
-        <div class="pull-right"><a href="{% url 'entry_create' %}" class="btn btn-primary"><i class="icon-plus icon-white"></i> New Entry</a></div>
+        <div class="pull-right"><a href="{% url 'entry_create' %}" class="btn btn-primary"><i class="icon-plus icon-white"></i> {% trans "New Entry" %}</a></div>
         <br /><br />
         <table class="table table-bordered table-striped table-hover">
             <thead>
                 <tr>
-                    <th>Pay date</th>
-                    <th>Account</th>
-                    <th>Description</th>
-                    <th>Person</th>
-                    <th>Bank</th>
-                    <th>Discharge</th>
-                    <th>Amount</th>
+                    <th>{% trans "Pay date" %}</th>
+                    <th>{% trans "Account" %}</th>
+                    <th>{% trans "Description" %}</th>
+                    <th>{% trans "Person" %}</th>
+                    <th>{% trans "Bank" %}</th>
+                    <th>{% trans "Discharge" %}</th>
+                    <th>{% trans "Amount" %}</th>
                 </tr>
             </thead>
             <tbody>
             {% if not object_list %}
                 <tr>
-                    <td colspan="8">No registry.</td>
+                    <td colspan="8">{% trans "No registry." %}</td>
                 </tr>
             {% else %}
                 {% for entry in object_list %}
@@ -106,24 +107,24 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th>Sumarry</th>
+                            <th>{% trans "Sumarry" %}</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <th>Credit:</th>
+                            <th>{% trans "Credit:" %}</th>
                             <td><span class="pull-right">Value</span></td>
                         <tr>
                         <tr>
-                            <th>Debit:</th>
+                            <th>{% trans "Debit:" %}</th>
                             <td><span class="pull-right">Value</span></td>
                         <tr>
                         <tr>
-                            <th>Provided Balance:</th>
+                            <th>{% trans "Provided Balance:" %}</th>
                             <td><span class="pull-right">Value</span></td>
                         <tr>
                         <tr>
-                            <th>Realized Balance:</th>
+                            <th>{% trans "Realized Balance:" %}</th>
                             <td><span class="pull-right">Value</span></td>
                         <tr>
                     </tbody>
@@ -138,7 +139,7 @@
     <form id="EntryDischargeForm" method="post" action="#">{% csrf_token %}
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3>Closes entry informations</h3>
+            <h3>{% trans "Closes entry informations" %}</h3>
         </div>
 
         <div class="modal-body">
@@ -146,8 +147,8 @@
         </div>
 
         <div class="modal-footer">
-            <a href="#" class="btn" data-dismiss="modal">Close</a>
-            <button class="btn btn-primary">Save</button>
+            <a href="#" class="btn" data-dismiss="modal">{% trans "Close</a>
+            <button class="btn btn-primary">{% trans "Save" %}</button>
         </div>
     </form>
 

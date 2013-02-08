@@ -1,16 +1,17 @@
 {% extends 'cashflow.html' %}
 {% load bootstrap %}
 {% load url from future %}
+{% load i18n %}
 
 {% block content %}
 <div class="panel">
-    <span class="name">Delete bank?</span>
+    <span class="name">{% trans "Delete bank?" %}</span>
     <div class="content">
         <form action="" method="post">{% csrf_token %}
-            <p>Really want to <strong>delete</strong> this bank?</p>
+            <p>{% trans "Really want to " %}<strong>{% trans "delete" %}</strong>{% trans " this bank?" %}</p>
             <div class="form-actions">
-                <a href="{% url 'bank_list' %}" class="btn">No</a>
-                <button type="submit" class="btn btn-danger">Yes</button>
+                <a href="{% url 'bank_list' %}" class="btn">{% trans "No" %}</a>
+                <button type="submit" class="btn btn-danger">{% trans "Yes" %}</button>
             </div>
         </form>
     </div>

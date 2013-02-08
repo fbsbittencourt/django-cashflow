@@ -1,14 +1,15 @@
 {% extends 'cashflow.html' %}
 {% load url from future %}
 {% load bootstrap %}
+{% load i18n %}
 
 {% block content %}
 <div class="panel">
-    <span class="name">Entry</span>
+    <span class="name">{% trans "Entry" %}</span>
     <div class="content">
         <form method="post" action="#">{% csrf_token %}
             <fieldset>
-                <legend>Basic</legend>
+                <legend>{% trans "Basic" %}</legend>
                 <div class="span3">
                     {{form.name|bootstrap}}
                 </div>
@@ -21,7 +22,7 @@
             </fieldset>
 
             <fieldset>
-                <legend>Other</legend>
+                <legend>{% trans "Other" %}</legend>
                 <div class="span3">
                     {{form.bank|bootstrap}}
                 </div>
@@ -34,7 +35,7 @@
             </fieldset>
 
             <fieldset>
-                <legend>Closes</legend>
+                <legend>{% trans "Closes" %}</legend>
                 <div class="span3">
                     {{form.doc|bootstrap}}
                     {{form.check|bootstrap}}
@@ -48,8 +49,8 @@
             </fieldset>
 
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Save</button>
-                <a href="{% url 'entry_list' %}" class="btn">Cancel</a>
+                <button type="submit" class="btn btn-primary">{% trans "Save" %}</button>
+                <a href="{% url 'entry_list' %}" class="btn">{% trans "Cancel" %}</a>
             </div>
         </form>
     </div>

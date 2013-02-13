@@ -1,4 +1,5 @@
 from django.db.models import Sum, Max, Min
+from datetime import datetime
 from money.models import Balance, Entry, Bank
 class BalanceManager(object):
 
@@ -44,7 +45,7 @@ class BalanceManager(object):
 
             summary.append({
                 'bank':bank,
-                'last_balance' : balance.amount,
+                'latest_balance' : balance.amount,
                 'credit' : credit,
                 'debit' : debit,
                 'balance' : new_balance
@@ -55,7 +56,7 @@ class BalanceManager(object):
                 'credit' : sum([balance.get('credit') for balance in summary]),
                 'debit' : sum([balance.get('debit') for balance in summary]),
                 'balance' : sum([balance.get('balance') for balance in summary]),
-                'last_balance' : sum([balance.get('last_balance') for balance in summary]),
+                'latest_balance' : sum([balance.get('latest_balance') for balance in summary]),
             }
         return summary
 

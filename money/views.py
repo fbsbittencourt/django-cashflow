@@ -33,7 +33,7 @@ class DashBoard(generic.LoginRequired, TemplateView):
         context['graph_01'] = self.get_graph_data()
         return context
 
-class EntryList(generic.RestrictedListView, FormMixin):
+class EntryList(generic.RestrictedListView, FormMixin, BalanceManager):
     model=Entry
     form_class=forms.EntryFilterForm
 
@@ -90,6 +90,7 @@ class EntryList(generic.RestrictedListView, FormMixin):
         context = super(EntryList, self).get_context_data(**kwargs)
         context['form'] = self.get_form(self.get_form_class())
         context['entry_discharge_form'] = forms.EntryDischargeForm()
+        context['summary'] = self.get_summary(self.get_queryset(), compress=True)
         return context
 
 

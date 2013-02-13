@@ -107,25 +107,26 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th>{% trans "Sumarry" %}</th>
+                            <th>{% trans "Summary" %}</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
+                            <th>{% trans "Latest Balance:" %}</th>
+                            <td><span class="pull-right">{{summary.latest_balance}}</span></td>
+                        <tr>
+
+                        <tr>
                             <th>{% trans "Credit:" %}</th>
-                            <td><span class="pull-right">Value</span></td>
+                            <td><span class="pull-right">{{summary.credit}}</span></td>
                         <tr>
                         <tr>
                             <th>{% trans "Debit:" %}</th>
-                            <td><span class="pull-right">Value</span></td>
+                            <td><span class="pull-right">{{summary.debit}}</span></td>
                         <tr>
                         <tr>
-                            <th>{% trans "Provided Balance:" %}</th>
-                            <td><span class="pull-right">Value</span></td>
-                        <tr>
-                        <tr>
-                            <th>{% trans "Realized Balance:" %}</th>
-                            <td><span class="pull-right">Value</span></td>
+                            <th>{% trans "Balance:" %}</th>
+                            <td><span class="pull-right">{{summary.balance}}</span></td>
                         <tr>
                     </tbody>
                 </table>
